@@ -21,8 +21,7 @@ function new(){
     cp -r ./ $repoDir
     echo "switching to $repoName from "
     cd $(echo $repoDir)
-    rm -rf ./.git;`
-
+    rm -rf ./.git;
     if ask "Do you want to create repository as"; then
         createRepo $repoName
     fi
