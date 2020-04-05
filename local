@@ -1,0 +1,51 @@
+
+#!/bin/bash
+source ./utils.sh
+
+function up(){
+    docker-compose up -d
+}
+
+function down(){
+    docker-compose stop
+}
+
+
+
+function new(){
+    repoName=$1
+    cwd=$(pwd)
+     repoDir="$(dirname $cwd)/$repoName"
+ 
+[ -d $repoDir ] && echo "Directory already exists." && return -1
+    cp -r ./ $repoDir
+    echo "switching to $repoName from "
+    cd $(echo $repoDir)
+    rm -rf ./.git;`
+
+    if ask "Do you want to create repository as"; then
+        createRepo $repoName
+    fi
+
+    git init
+
+    cp .env-default .env
+    
+    remoteURL="https://github.com/passionintellectual/$repoName.git"
+    if [ ${#remoteURL} -ge 0 ]; then 
+        echo $remoteURL
+        if ask "Do you want to add remote url as $remoteURL?"; then
+            echo "Adding remote url"
+            git remote add origin $remoteURL
+        fi
+    fi
+
+    if ask "Do you want to do first commit ?"; then 
+        git checkout -b develop
+        git add .
+        git commit -m "initial website setup"
+        git push -u origin HEAD:develop
+    fi
+}
+
+callFunction $@
